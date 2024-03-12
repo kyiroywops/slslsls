@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "767988818756",
+    "project_id": "travelcheck-39ab0",
+    "storage_bucket": "travelcheck-39ab0.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:767988818756:android:5e4572bbc8917cf5402d11",
+        "android_client_info": {
+          "package_name": "com.example.travelcheck"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDoRfznPImPnnr3MKM39IINwvBOxcb4n7c"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
