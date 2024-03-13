@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 // Asegúrate de tener los paquetes necesarios para la autenticación de Google y Facebook.
 
@@ -50,12 +51,28 @@ class _LoginScreenState extends State<LoginScreen> {
               },
             ),
           ),
-          // Título "Hi!"
-           Positioned(
-            top: titleTopPosition, // Posición calculada para el texto "Hi!"
-            left: 20,
-            child: Text('Hi!', style: TextStyle(color: Colors.white, fontSize: 40, fontWeight: FontWeight.bold)),
-          ),
+        Positioned(
+  top: titleTopPosition,
+  left: 20,
+  child: isEmailEntered
+      ? Row(
+          children: [
+            IconButton(
+              icon: Icon(Icons.arrow_back, color: Colors.white),
+              onPressed: () {
+                setState(() {
+                  isEmailEntered = false; // Esto permitirá al usuario volver al estado anterior
+                });
+              },
+            ),
+            Text(
+              'Log in',
+              style: TextStyle(color: Colors.white, fontSize: 40, fontWeight: FontWeight.bold),
+            ),
+          ],
+        )
+      : Text('Hi!', style: TextStyle(color: Colors.white, fontSize: 40, fontWeight: FontWeight.bold)),
+),
           // Container con efecto "frosted"
           Positioned(
             top: frostedContainerTopPosition, // Posición calculada para el contenedor
@@ -75,29 +92,98 @@ class _LoginScreenState extends State<LoginScreen> {
               child: Column(
                 children: <Widget>[
                    if (!isEmailEntered) ...[
-                        TextFormField(
+                        TextField(
                           controller: emailController,
-                          decoration: InputDecoration(labelText: 'Email'),
                           keyboardType: TextInputType.emailAddress,
-                        ),
+                          cursorColor: Colors.green, // Color del cursor
+                          decoration: InputDecoration(
+                            filled: true,
+                            fillColor: Colors.grey[300],
+                            hintText: 'Email',
+                            // Personaliza la apariencia del borde en foco
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8.0),
+                              borderSide: BorderSide(
+                                color: Colors.green, // Borde verde cuando el TextField está en foco
+                                width: 3.0, // Aumenta el grosor del borde aquí
+                              ),
+                            ),
+                            // Personaliza la apariencia del borde cuando el TextField está sin foco
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8.0),
+                              borderSide: BorderSide(
+                                color: Colors.grey[200]!, // Borde gris claro en el estado normal
+                                width: 1.0, // Grosor estándar del borde
+                              ),
+                            ),
+                            // Asegúrate de eliminar la propiedad prefixIcon para no mostrar ningún icono
+                          ),
+),
                         SizedBox(height: 20),
-                        ElevatedButton(
-                          child: Text('Continue'),
-                          onPressed: () {
-                            setState(() {
-                              isEmailEntered = true; // Actualiza el estado para mostrar el campo de contraseña
-                            });
-                          },
+                       ElevatedButton(
+                        child: Text(
+                          'Continue',
+                          style: TextStyle(color: Colors.white, fontFamily: 'Cabin', fontWeight: FontWeight.w700), // Texto blanco
                         ),
+                       style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.black, // Fondo negro
+                        disabledForegroundColor: Colors.grey.withOpacity(0.38), disabledBackgroundColor: Colors.grey.withOpacity(0.12), // Color del botón cuando está deshabilitado o en press
+                        minimumSize: Size(double.infinity, 60), // Ancho máximo y alto fijo
+                        padding: EdgeInsets.symmetric(horizontal: 20, vertical: 18), // Padding vertical para que coincida con la altura del TextField
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8.0), // Mismo radio de borde que el TextField
+                        ),
+                      ),
+                        onPressed: () {
+                          setState(() {
+                            isEmailEntered = true; // Actualiza el estado para mostrar el campo de contraseña
+                          });
+                        },
+                      ),
+                      
                       ] else ...[
-                        TextFormField(
+                        TextField(
                           controller: passwordController,
-                          obscureText: true,
-                          decoration: InputDecoration(labelText: 'Password'),
+                          keyboardType: TextInputType.text,
+                          cursorColor: Colors.green, // Color del cursor
+                          decoration: InputDecoration(
+                            filled: true,
+                            fillColor: Colors.grey[300],
+                            hintText: 'Password',
+                            // Personaliza la apariencia del borde en foco
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8.0),
+                              borderSide: BorderSide(
+                                color: Colors.green, // Borde verde cuando el TextField está en foco
+                                width: 3.0, // Aumenta el grosor del borde aquí
+                              ),
+                            ),
+                            // Personaliza la apariencia del borde cuando el TextField está sin foco
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8.0),
+                              borderSide: BorderSide(
+                                color: Colors.grey[200]!, // Borde gris claro en el estado normal
+                                width: 1.0, // Grosor estándar del borde
+                              ),
+                            ),
+                            // Asegúrate de eliminar la propiedad prefixIcon para no mostrar ningún icono
+                          ),
                         ),
                         SizedBox(height: 20),
                         ElevatedButton(
-                          child: Text('Log In'),
+                         child: Text(
+                          'Login',
+                          style: TextStyle(color: Colors.white), // Texto blanco
+                        ),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.black, // Fondo negro
+                          disabledForegroundColor: Colors.grey.withOpacity(0.38), disabledBackgroundColor: Colors.grey.withOpacity(0.12), // Color del botón cuando está deshabilitado o en press
+                          minimumSize: Size(double.infinity, 60), // Ancho máximo y alto fijo
+                          padding: EdgeInsets.symmetric(horizontal: 20, vertical: 18), // Padding vertical para que coincida con la altura del TextField
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8.0), // Mismo radio de borde que el TextField
+                          ),
+                        ),
                           onPressed: () {
                             // Lógica para iniciar sesión con la contraseña
                           },
@@ -109,27 +195,133 @@ class _LoginScreenState extends State<LoginScreen> {
                           },
                         ),
                       ],
+
+
                       if (!isEmailEntered) ...[
-                        TextButton.icon(
-                          icon: Icon(FontAwesomeIcons.facebookF),
-                          label: Text('Continue with Facebook'),
+                       SizedBox(height: 20), // Espacio entre el botón 'Continue' y el texto 'or'
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 80.0), // Ajusta este valor según tus necesidades
+                        child: Center(
+                          child: Text(
+                            'or',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black,
+                            ),
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: 20), // Espacio entre el texto 'or' y los botones de autenticación social
+                      SizedBox(
+                        width: double.infinity, // Esto hará que el botón se expanda al ancho del contenedor
+                        child: TextButton.icon(
+                          icon: SvgPicture.asset(
+                            'assets/icons/facebook.svg', // Asegúrate de que la ruta del asset es correcta
+                            width: 24.0,
+                            height: 24.0,
+                          ),
+                          label: Text(
+                            'Continue with Facebook',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          style: TextButton.styleFrom(
+                            foregroundColor: Colors.white, backgroundColor: Colors.blue, // El color de fondo de Facebook
+                            padding: EdgeInsets.symmetric(vertical: 18.0), // Alinea el padding vertical con el botón "Continue"
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8.0),
+                            ), // El color del texto e icono cuando se presiona el botón
+                          ),
                           onPressed: () {
-                            // Lógica para inicio de sesión con Facebook
+                            // Tu lógica de autenticación con Facebook aquí
                           },
                         ),
-                        TextButton.icon(
-                          icon: Icon(FontAwesomeIcons.google),
-                          label: Text('Continue with Google'),
-                          onPressed: () {
-                            // Lógica para inicio de sesión con Google
-                          },
+                      ),
+
+                  Padding(
+                    padding: const EdgeInsets.only(top:20),
+                    child: SizedBox(
+                          width: double.infinity, // Esto hará que el botón se expanda al ancho del contenedor
+                          child: TextButton.icon(
+                            icon: SvgPicture.asset(
+                              'assets/icons/google.svg', // Asegúrate de que la ruta del asset es correcta
+                              width: 24.0,
+                              height: 24.0,
+                            ),
+                            label: Text(
+                              'Continue with Google',
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            style: TextButton.styleFrom(
+                              foregroundColor: Colors.black, backgroundColor: Colors.grey[200], // El color de fondo de Facebook
+                              padding: EdgeInsets.symmetric(vertical: 18.0), // Alinea el padding vertical con el botón "Continue"
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8.0),
+                              ), // El color del texto e icono cuando se presiona el botón
+                            ),
+                            onPressed: () {
+                              // Tu lógica de autenticación con Facebook aquí
+                            },
+                          ),
                         ),
-                        TextButton(
-                          child: Text('Don’t have an account? Sign up'),
-                          onPressed: () {
-                            // Lógica para ir a la pantalla de registro
-                          },
-                        ),
+                  ),
+ 
+                     Padding(
+                       padding: const EdgeInsets.all(30.0),
+                       child: Column(
+                         crossAxisAlignment: CrossAxisAlignment.start, // Alinea los widgets a la izquierda
+                         children: [
+                           Row(
+                             children: [
+                               Text(
+                                 "Don't have an account? ",
+                                 style: TextStyle(
+                                   color: Colors.black,
+                                   fontSize: 16,
+                                 ),
+                               ),
+                               GestureDetector(
+                                 onTap: () {
+                                   // Acción para navegar al registro
+                                 },
+                                 child: Text(
+                                   "Sign up",
+                                   style: TextStyle(
+                                     fontSize: 16,
+                                     fontWeight: FontWeight.bold,
+                                   ),
+                                 ),
+                               ),
+                             ],
+                           ),
+                           TextButton(
+                             onPressed: () {
+                               // Acción para navegar a Forgot your password
+                             },
+                             child: Text(
+                               "Forgot your password?",
+                               style: TextStyle(
+                                 fontWeight: FontWeight.bold,
+                                 color: Colors.black,
+                                 fontSize: 16,
+                               ),
+                             ),
+                             style: TextButton.styleFrom(
+                               padding: EdgeInsets.zero, // Remueve el padding para alinear el texto
+                               alignment: Alignment.centerLeft, // Alinea el texto a la izquierda
+                             ),
+                           ),
+                         ],
+                       ),
+                     ),
+
+
                       ]
                     
                 ],
