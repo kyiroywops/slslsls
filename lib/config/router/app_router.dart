@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:travelcheck/screens/screens/auth_page.dart';
+import 'package:travelcheck/screens/screens/basescreen.dart';
 import 'package:travelcheck/screens/screens/home_page.dart';
 import 'package:travelcheck/screens/screens/login_page.dart';
 
@@ -21,6 +22,10 @@ class AppRouter {
       GoRoute(
         path: '/home',
         builder: (context, state) => const HomeScreen(),
+      ),
+      GoRoute(
+        path: '/basescreen',
+      builder: (context, state) => BaseScreen(),
       ),
     ],
 redirect: (BuildContext context, GoRouterState state) async {

@@ -14,7 +14,7 @@ class AuthCheckScreen extends StatelessWidget {
         if (snapshot.connectionState == ConnectionState.active) {
           // Si hay datos (usuario logueado), entonces navega a HomeScreen
           if (snapshot.hasData) {
-            Future.microtask(() => context.go('/home'));
+            Future.microtask(() => context.go('/basescreen'));
           } 
           // Si no hay datos (usuario no logueado), navega a LoginScreen
           else {

@@ -1,8 +1,9 @@
 import 'dart:ui';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:go_router/go_router.dart';
 // Asegúrate de tener los paquetes necesarios para la autenticación de Google y Facebook.
 
 class LoginScreen extends StatefulWidget {
@@ -16,6 +17,8 @@ class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController emailController = TextEditingController();
 
    bool isEmailEntered = false;
+   bool _passwordVisible = false;
+
 
   final TextEditingController passwordController = TextEditingController();
 
@@ -27,6 +30,7 @@ class _LoginScreenState extends State<LoginScreen> {
     double frostedContainerTopPosition = MediaQuery.of(context).size.height * 0.3;
     double paddingVertical = 20; // El padding vertical de tu contenedor
     double titleTopPosition = frostedContainerTopPosition - 60; // Sube el título más arriba
+    
 
     return Scaffold(
       body: Stack(
@@ -51,6 +55,17 @@ class _LoginScreenState extends State<LoginScreen> {
               },
             ),
           ),
+          Positioned(
+        top: titleTopPosition - 110, // Ajusta la posición vertical según sea necesario
+        left: 0,
+        right: 0,
+        child: Center(
+          child: Image.asset(
+            'assets/images/logo.png', // Ruta del logo
+            height: 100, // Ajusta el tamaño según tus necesidades
+          ),
+        ),
+      ),
         Positioned(
   top: titleTopPosition,
   left: 20,
@@ -92,10 +107,17 @@ class _LoginScreenState extends State<LoginScreen> {
               child: Column(
                 children: <Widget>[
                    if (!isEmailEntered) ...[
-                        TextField(
+                        TextFormField(
+                           validator: (value) {
+                              if (value == null || value.isEmpty || !value.contains('@')) {
+                                return 'Please enter a valid email address.';
+                              }
+                              return null;
+                            },
+                          
                           controller: emailController,
                           keyboardType: TextInputType.emailAddress,
-                          cursorColor: Colors.green, // Color del cursor
+                          cursorColor: Colors.black, // Color del cursor
                           decoration: InputDecoration(
                             filled: true,
                             fillColor: Colors.grey[300],
@@ -104,7 +126,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             focusedBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(8.0),
                               borderSide: BorderSide(
-                                color: Colors.green, // Borde verde cuando el TextField está en foco
+                                color: Colors.grey.shade800, // Borde verde cuando el TextField está en foco
                                 width: 3.0, // Aumenta el grosor del borde aquí
                               ),
                             ),
@@ -116,9 +138,10 @@ class _LoginScreenState extends State<LoginScreen> {
                                 width: 1.0, // Grosor estándar del borde
                               ),
                             ),
+                           
                             // Asegúrate de eliminar la propiedad prefixIcon para no mostrar ningún icono
                           ),
-),
+                        ),
                         SizedBox(height: 20),
                        ElevatedButton(
                         child: Text(
@@ -142,33 +165,56 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                       
                       ] else ...[
-                        TextField(
-                          controller: passwordController,
-                          keyboardType: TextInputType.text,
-                          cursorColor: Colors.green, // Color del cursor
-                          decoration: InputDecoration(
-                            filled: true,
-                            fillColor: Colors.grey[300],
-                            hintText: 'Password',
-                            // Personaliza la apariencia del borde en foco
-                            focusedBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(8.0),
-                              borderSide: BorderSide(
-                                color: Colors.green, // Borde verde cuando el TextField está en foco
-                                width: 3.0, // Aumenta el grosor del borde aquí
-                              ),
-                            ),
-                            // Personaliza la apariencia del borde cuando el TextField está sin foco
-                            enabledBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(8.0),
-                              borderSide: BorderSide(
-                                color: Colors.grey[200]!, // Borde gris claro en el estado normal
-                                width: 1.0, // Grosor estándar del borde
-                              ),
-                            ),
-                            // Asegúrate de eliminar la propiedad prefixIcon para no mostrar ningún icono
-                          ),
-                        ),
+                 TextField(
+                  controller: passwordController,
+                  
+                  keyboardType: TextInputType.text,
+                  obscureText: !_passwordVisible, // Determina si el texto debe ser oscurecido
+                  obscuringCharacter: '●', // Utiliza un carácter de círculo más grande
+                  cursorColor: Colors.black, // Color del cursor
+                  decoration: InputDecoration(
+                    suffixIcon: Padding(
+                      padding: const EdgeInsets.fromLTRB(0, 15, 20, 0),
+                      child: GestureDetector(
+                                  onTap: () {
+                                    setState(() {
+                                      _passwordVisible = !_passwordVisible;
+                                    });
+                                  },
+                                  child: Text(
+                                    _passwordVisible ? "Hide" : "View",
+                                    style: TextStyle(
+                                      color: Colors.grey[700], // Ajusta el color según tu diseño
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                      ),
+                    ),
+                    
+                    filled: true,
+                    fillColor: Colors.grey[300],
+                    hintText: 'Password',
+                    // Ajustes adicionales para la apariencia del borde
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8.0),
+                      borderSide: BorderSide(
+                        color: Colors.grey.shade800, // Borde verde cuando el TextField está en foco
+                        width: 3.0, // Grosor del borde
+                      ),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8.0),
+                      borderSide: BorderSide(
+                        color: Colors.grey[200]!, // Borde gris claro en el estado normal
+                        width: 1.0, // Grosor estándar del borde
+                      ),
+                    ),
+                    // Ajustes para el texto de sugerencia, color de relleno, etc.
+                  ),
+                  style: TextStyle(
+                    fontSize: 15, // Aumenta el tamaño de la fuente para que los círculos parezcan más grandes
+                  ),
+                ),
                         SizedBox(height: 20),
                         ElevatedButton(
                          child: Text(
@@ -184,16 +230,51 @@ class _LoginScreenState extends State<LoginScreen> {
                             borderRadius: BorderRadius.circular(8.0), // Mismo radio de borde que el TextField
                           ),
                         ),
-                          onPressed: () {
-                            // Lógica para iniciar sesión con la contraseña
-                          },
+                      onPressed: () async {
+                        if (emailController.text.contains('@')) {
+                          try {
+                            UserCredential userCredential = await FirebaseAuth.instance.signInWithEmailAndPassword(
+                              email: emailController.text,
+                              password: passwordController.text,
+                            );
+                            if (mounted) {
+                              context.go('/basescreen'); // Assuming GoRouter is set up properly
+                            }
+                          } on FirebaseAuthException catch (e) {
+                            if (e.code == 'user-not-found') {
+                              ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('No user found for that email.')));
+                            } else if (e.code == 'wrong-password') {
+                              ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Wrong password provided for that user.')));
+                            }
+                          }
+                        } else {
+                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Please enter a valid email address.')));
+                        }
+                      },
                         ),
-                        TextButton(
-                          child: Text('Forgot your password?'),
-                          onPressed: () {
-                            // Lógica para recuperar contraseña
-                          },
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Align(
+                          alignment: Alignment.centerLeft,
+                          child: TextButton(
+                                 onPressed: () {
+                                   // Acción para navegar a Forgot your password
+                                 },
+                                 child: Text(
+                                   "Forgot your password?",
+                                   style: TextStyle(
+                                     fontWeight: FontWeight.bold,
+                                     color: Colors.black,
+                                     fontSize: 14,
+                                   ),
+                                 ),
+                                 style: TextButton.styleFrom(
+                                   padding: EdgeInsets.zero, // Remueve el padding para alinear el texto
+                                   alignment: Alignment.centerLeft, // Alinea el texto a la izquierda
+                                 ),
+                               ),
                         ),
+                      ),
                       ],
 
 
