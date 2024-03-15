@@ -1,5 +1,7 @@
 import 'dart:ui';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -138,55 +140,119 @@ class _HomeScreenState extends State<HomeScreen> {
 
 
 class MyElevatedButton extends StatelessWidget {
-  void showAddItemDialog(BuildContext context) {
-  showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      return Dialog(
-        backgroundColor: Colors.transparent, // Hace que el fondo del diálogo sea transparente
-        child: ClipRRect( // Proporciona bordes redondeados al contenedor
-          borderRadius: BorderRadius.circular(20),
-          child: BackdropFilter(
-            filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10), // Aplica el efecto de desenfoque
-            child: Container(
-              width: double.infinity,
-              padding: EdgeInsets.all(20),
-              decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.7), // Color del contenedor con transparencia
+  final TextEditingController bagNameController = TextEditingController(); // Controlador para el nombre de la maleta
+
+
+void showAddItemDialog(BuildContext context) {
+  final User? currentUser = FirebaseAuth.instance.currentUser; // Obtén el usuario actual
+      int selectedEmojiIndex = -1; // Para manejar el índice del emoji seleccionado
+
+     
+
+    List<String> bagEmojis = ["👜", "🎒", "💼", "🛍️"];
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return StatefulBuilder( // Esto permite actualizar el estado dentro del diálogo
+          builder: (context, setState) {
+            return Dialog(
+              backgroundColor: Colors.transparent,
+              child: ClipRRect(
                 borderRadius: BorderRadius.circular(20),
-              ),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: <Widget>[
-                  // Aquí puedes agregar los widgets que necesitas, como campos de texto para agregar artículos
-                  Text('Añadir Artículo', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
-                  SizedBox(height: 20),
-                  TextField(
-                    decoration: InputDecoration(hintText: 'Nombre del artículo'),
+                child: BackdropFilter(
+                  filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                  child: Container(
+                    padding: EdgeInsets.all(20),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withOpacity(0.7),
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: <Widget>[
+                        Text('Add a new bag', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
+                        SizedBox(height: 20),
+                        TextField(
+                          controller: bagNameController, // Usando el controlador aquí
+                          decoration: InputDecoration(
+                            filled: true,
+                            fillColor: Colors.white,
+                            hintText: 'Bag of Jimmy',
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(20),
+                              borderSide: BorderSide.none,
+                            ),
+                          ),
+                        ),
+                          SizedBox(height: 10),
+                          Wrap(
+                            spacing: 10, // Espacio horizontal entre los emojis
+                            children: List<Widget>.generate(bagEmojis.length, (index) {
+                              return GestureDetector(
+                                onTap: () {
+                                  setState(() {
+                                    selectedEmojiIndex = index; // Actualiza el índice seleccionado
+                                  });
+                                },
+                                child: Container(
+                                  padding: EdgeInsets.all(8),
+                                  decoration: BoxDecoration(
+                                    color: selectedEmojiIndex == index ? Colors.black.withOpacity(0.5) : Colors.transparent, // Cambia el fondo si está seleccionado
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  child: Text(bagEmojis[index], style: TextStyle(fontSize: 24)),
+                                ),
+                              );
+                            }),
+                          ),
+                          SizedBox(height: 20),
+                           ElevatedButton(
+                            onPressed: () async {
+                              if (currentUser == null) {
+                                // Asegúrate de que hay un usuario conectado.
+                                print('No user is signed in.');
+                                return;
+                              }
+                              if (selectedEmojiIndex != -1 && bagNameController.text.isNotEmpty) {
+                                try {
+                                  // Añade la maleta a Firestore con el UID del usuario.
+                                  await FirebaseFirestore.instance.collection('maletas').add({
+                                    'nombre': bagNameController.text.trim(),
+                                    'emoji': bagEmojis[selectedEmojiIndex],
+                                    'userId': currentUser?.uid, // Guarda el UID del usuario con cada maleta
+                                  });
+                                  Navigator.of(context).pop(); // Cierra el diálogo
+                                } catch (e) {
+                                  print(e); // Si hay un error, imprime el mensaje de error.
+                                }
+                              }
+                            },
+                            child: Text('Agregar'),
+                                                )
+
+                        // El resto del código sigue igual hasta el botón...
+                       
+                      ],
+                    ),
                   ),
-                  SizedBox(height: 20),
-                  ElevatedButton(
-                    onPressed: () {
-                      // Acción para cuando se presiona el botón de añadir artículo
-                    },
-                    child: Text('Agregar'),
-                  ),
-                ],
+                ),
               ),
-            ),
-          ),
-        ),
-      );
-    },
-  );
-}
+            );
+          },
+        );
+      },
+    );
+  }
+
+
 
   @override
   Widget build(BuildContext context) {
     return ElevatedButton(
       onPressed: () => showAddItemDialog(context),
       style: ElevatedButton.styleFrom(
-        backgroundColor: Color(0xFF6F4E37),
+        backgroundColor: Colors.grey[800],
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(20),
         ),
@@ -194,7 +260,10 @@ class MyElevatedButton extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
-          Text("🧳+"),
+          Text("🧳 +", style: TextStyle(
+            fontWeight: FontWeight.bold,
+            color: Colors.white
+          ),),
         ],
       ),
     );

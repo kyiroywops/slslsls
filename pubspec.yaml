@@ -7,7 +7,7 @@ environment:
   sdk: ">=3.3.0 <4.0.0"
 
 dependencies:
-  cloud_firestore: ^4.15.8
+  cloud_firestore: ^4.15.9
   firebase_auth: ^4.17.8
   firebase_core: ^2.27.0
   flutter:
@@ -46,3 +46,4 @@ flutter:
     - assets/icons/
     - assets/images/
     - assets/images/iconos/
+    - assets/images/iconos/ropa/ 

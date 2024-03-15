@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
+import 'package:travelcheck/screens/screens/clothes_page.dart';
 import 'package:travelcheck/screens/screens/home_page.dart';
 import 'package:travelcheck/screens/screens/profile_page.dart';
 
@@ -12,7 +13,7 @@ class _BaseScreenState extends State<BaseScreen> {
   int _selectedIndex = 0;
   static const List<Widget> _widgetOptions = <Widget>[
     HomeScreen(),
-    Text('Clothes', textAlign: TextAlign.center),
+    ClothesScreen(),
     Text('Articles Screen', textAlign: TextAlign.center),
     Text('Wash Screen', textAlign: TextAlign.center),
     ProfileScreen()
